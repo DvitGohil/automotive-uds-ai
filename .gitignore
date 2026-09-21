@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+venv/
+.venv/
+*.egg
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.sqlite3
+
+# Vector store / document storage (local runtime data, not source)
+backend/data/
+backend/uploads/
+
+# FAISS index files
+*.faiss
+
+# Logs
+*.log
+
+# Node / frontend
+node_modules/
+dist/
+dist-ssr/
+frontend/dist/
+
+# IDE / editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
