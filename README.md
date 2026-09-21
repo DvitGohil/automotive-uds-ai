@@ -256,6 +256,4 @@ Document Upload
 
 ---
 
-## License
 
-Internal / proprietary. See project documentation for usage terms.
