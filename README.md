@@ -277,7 +277,3 @@ Document Upload
 - **UDS Knowledge panel** — Requires manually entering `document_version_id` (no document browsing endpoint yet).
 
 ---
-
-## License
-
-Internal / proprietary. See project documentation for usage terms.
