@@ -88,6 +88,15 @@ frontend/
 │   └── main.jsx
 ├── package.json
 └── vite.config.js
+
+deployment/
+├── docker-compose.yml              # Orchestrates backend + frontend services
+├── backend.Dockerfile              # Multi-stage Python build (FastAPI + Uvicorn)
+├── frontend.Dockerfile             # Multi-stage Node → Nginx build (React SPA)
+├── nginx.conf                      # Nginx: SPA routing + API reverse proxy
+├── .env.docker                     # Environment variables template for Docker
+├── .dockerignore                   # Build context filter
+└── README.md                       # Docker deployment guide
 ```
 
 ---
@@ -121,6 +130,20 @@ npm run dev
 ```
 
 The UI will be available at `http://localhost:5173`.
+
+### Docker Deployment
+
+```bash
+# From the project root — single command to build & run everything
+docker compose -f deployment/docker-compose.yml up --build
+```
+
+| Service  | URL                                      |
+|----------|------------------------------------------|
+| Frontend | [http://localhost:3000](http://localhost:3000) |
+| Backend  | [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health) |
+
+To customise environment variables (LLM keys, auth secrets, ports), edit `deployment/.env.docker` before starting. See [`deployment/README.md`](deployment/README.md) for the full guide.
 
 ### Run Tests
 
@@ -252,8 +275,9 @@ Document Upload
 - **`KNOWN_SERVICES` coverage** — 9 standardized ISO 14229 services. OEM extensions come from document ingestion.
 - **No automated frontend tests** — React UI verified via production build + lint only.
 - **UDS Knowledge panel** — Requires manually entering `document_version_id` (no document browsing endpoint yet).
-- **Dockerization** — Stage 21, not yet implemented.
 
 ---
 
+## License
 
+Internal / proprietary. See project documentation for usage terms.
