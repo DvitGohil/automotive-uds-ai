@@ -1,0 +1,63 @@
+# ═══════════════════════════════════════════════════════════════════════
+# Automotive UDS AI – Docker Compose
+# ═══════════════════════════════════════════════════════════════════════
+# Run from project root:
+#   docker compose -f deployment/docker-compose.yml up --build
+#
+# Or from this directory:
+#   cd deployment && docker compose up --build
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+  # ── Backend (FastAPI + Uvicorn) ──────────────────────────────────────
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/backend.Dockerfile
+    container_name: uds-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    env_file:
+      - .env.docker
+    environment:
+      - DATABASE_URL=sqlite:///./data/uds_assistant.db
+      - VECTOR_DB_PATH=./data/vector_store
+      - DOCUMENT_STORAGE_PATH=./data/documents
+    volumes:
+      - backend_data:/app/data
+    networks:
+      - uds-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
+
+  # ── Frontend (React + Nginx) ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployment/frontend.Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8000/api/v1
+    container_name: uds-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - uds-network
+
+# ── Volumes ────────────────────────────────────────────────────────────
+volumes:
+  backend_data:
+    driver: local
+
+# ── Networks ───────────────────────────────────────────────────────────
+networks:
+  uds-network:
+    driver: bridge
